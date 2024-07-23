@@ -1,1 +1,6 @@
 streamlit
+langchain
+openai
+numpy
+pandas
+
