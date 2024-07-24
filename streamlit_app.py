@@ -18,15 +18,19 @@ models={
     "claude-sonnet": ChatAnthropic(model="claude-3-5-sonnet-20240620")
 }
 
-def apply_model(model,prompt,user_input):
+def apply_model(model,ai_text,prompt,user_input):
     user_message=HumanMessage(content=f"{user_input}")
-    system_message=SystemMessage(content=f"{prompt}")
+    system_message=SystemMessage(content=f"{prompt} Relevant Content:\n\n {ai_text}\n")
+    #ai_message=SystemMessage(content=f"Relevant Content:\n\n {ai_text}\n")
     messages = [system_message, user_message]
     response=model.invoke(messages)
     return response.content
 
 st.title("RAFT")
 st.write("Hello World!!")
+
+with open('/workspaces/compare-raft/critterCapsule_file.txt', 'r') as file:
+    critter_text = file.read()
 
 prompt="""
 You are an expert in RAFT products. 
@@ -46,7 +50,7 @@ uploaded_file = st.file_uploader("Choose a file", type=["csv", "xlsx"])
 if uploaded_file is not None:
     # Check the file type and read it into a DataFrame
     if uploaded_file.name.endswith('.csv'):
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file,header=None,names=["Input"])
     elif uploaded_file.name.endswith('.xlsx'):
         df = pd.read_excel(uploaded_file)
     else:
@@ -54,7 +58,7 @@ if uploaded_file is not None:
         df = None
 
 if df is not None:
-    df.columns=["Input"]
+    #df.columns=["Input"]
     #df=df.sample(n=4)
     with st.expander("Input"):
         st.dataframe(df, hide_index=True)
@@ -62,7 +66,7 @@ if df is not None:
         for model_choice in models.keys():
             model_selected=models[model_choice]
             st.write(f"Running model: {model_choice}")
-            df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))
+            df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,critter_text,prompt,x))
   
     st.write("Completed all models")
     df.to_csv("RAFT_outputs.csv",index=False)
