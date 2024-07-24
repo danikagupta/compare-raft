@@ -68,7 +68,7 @@ if df is not None:
             st.write(f"Running model: {model_choice}")
             df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,critter_text,prompt,x))
   
-    st.write("Completed all models")
-    df.to_csv("RAFT_outputs.csv",index=False)
-    with st.expander("Output"):
+        #st.write("Completed all models")
+        df.to_csv("RAFT_outputs.csv",index=False)
+        #with st.expander("Output"):
         st.dataframe(df, hide_index=True)
