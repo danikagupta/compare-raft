@@ -29,7 +29,7 @@ def apply_model(model,ai_text,prompt,user_input):
 st.title("RAFT")
 st.write("Hello World!!")
 
-with open('/workspaces/compare-raft/critterCapsule_file.txt', 'r') as file:
+with open('critterCapsule_file.txt', 'r') as file:
     critter_text = file.read()
 
 prompt="""
