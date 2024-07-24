@@ -3,4 +3,9 @@ langchain
 openai
 numpy
 pandas
+langchain_community 
+langchain-core 
+langgraph 
+langchain-openai
+langchain-anthropic
 
