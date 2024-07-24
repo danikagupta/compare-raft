@@ -13,7 +13,7 @@ os.environ["ANTHROPIC_API_KEY"] = st.secrets["ANTHROPIC_API_KEY"]
 
 models={
     "gpt-4o": ChatOpenAI(model="gpt-4o"),
-    "gpt-4o-mini": ChatOpenAI(model="gpt-4o"),
+    "gpt-4o-mini": ChatOpenAI(model="gpt-4o-mini"),
     "claude-haiku": ChatAnthropic(model="claude-3-haiku-20240307"),
     "claude-sonnet": ChatAnthropic(model="claude-3-5-sonnet-20240620")
 }
@@ -39,21 +39,32 @@ If none of these conditions apply, please answer the question in the same age le
 If you cannot determine the age level of the questioner, reply in a way an elementary school student will understand.
 """
 
-df=pd.read_csv("RAFT_inputs.csv")
-df.columns=["Input"]
-#df=df.sample(n=4)
-with st.expander("Input"):
-    st.dataframe(df, hide_index=True)
-if st.button("Run"):
-    for model_choice in models.keys():
-        model_selected=models[model_choice]
-        st.write(f"Selected model: {model_choice}")
-        df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))
-#if model_choice := st.radio("Choose a model",models.keys(),index=None):
-#    model_selected=models[model_choice]
-#    st.write(f"Selected model: {model_choice}")
-#    df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))   
-    st.write("Done")
+df = None
+
+uploaded_file = st.file_uploader("Choose a file", type=["csv", "xlsx"])
+
+if uploaded_file is not None:
+    # Check the file type and read it into a DataFrame
+    if uploaded_file.name.endswith('.csv'):
+        df = pd.read_csv(uploaded_file)
+    elif uploaded_file.name.endswith('.xlsx'):
+        df = pd.read_excel(uploaded_file)
+    else:
+        st.error("Unsupported file type")
+        df = None
+
+if df is not None:
+    df.columns=["Input"]
+    #df=df.sample(n=4)
+    with st.expander("Input"):
+        st.dataframe(df, hide_index=True)
+    if st.button("Run"):
+        for model_choice in models.keys():
+            model_selected=models[model_choice]
+            st.write(f"Running model: {model_choice}")
+            df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))
+  
+    st.write("Completed all models")
     df.to_csv("RAFT_outputs.csv",index=False)
-with st.expander("Output"):
-    st.dataframe(df, hide_index=True)
+    with st.expander("Output"):
+        st.dataframe(df, hide_index=True)
