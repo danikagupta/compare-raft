@@ -41,14 +41,19 @@ If you cannot determine the age level of the questioner, reply in a way an eleme
 
 df=pd.read_csv("RAFT_inputs.csv")
 df.columns=["Input"]
-df=df.sample(n=4)
+#df=df.sample(n=4)
 with st.expander("Input"):
     st.dataframe(df, hide_index=True)
-if model_choice := st.radio("Choose a model",models.keys(),index=None):
-    model_selected=models[model_choice]
-    st.write(f"Selected model: {model_choice}")
-    df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))   
-st.write("Done")
-df.to_csv("RAFT_outputs.csv",index=False)
+if st.button("Run"):
+    for model_choice in models.keys():
+        model_selected=models[model_choice]
+        st.write(f"Selected model: {model_choice}")
+        df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))
+#if model_choice := st.radio("Choose a model",models.keys(),index=None):
+#    model_selected=models[model_choice]
+#    st.write(f"Selected model: {model_choice}")
+#    df[model_choice]=df["Input"].apply(lambda x: apply_model(model_selected,prompt,x))   
+    st.write("Done")
+    df.to_csv("RAFT_outputs.csv",index=False)
 with st.expander("Output"):
     st.dataframe(df, hide_index=True)
