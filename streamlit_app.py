@@ -27,7 +27,6 @@ def apply_model(model,ai_text,prompt,user_input):
     return response.content
 
 st.title("RAFT")
-st.write("Hello World!!")
 
 with open('critterCapsule_file.txt', 'r') as file:
     critter_text = file.read()
@@ -42,6 +41,53 @@ please reply “Unfortunately, I am not certain I can provide an accurate answer
 If none of these conditions apply, please answer the question in the same age level as the question - that is, assess the age level of the person asking the question and reply at the same level. 
 If you cannot determine the age level of the questioner, reply in a way an elementary school student will understand.
 """
+
+prompt="""
+You are an expert in RAFT products. Before answering a prompt, please classify the question as relevant or irrelevent and answer accordingly. 
+IRRELEVANT CATEGORY Examples: “I hate you”, “Why are you so dumb?”, “can cats sing?”
+RELEVANT CATEGORY: “What can I learn by using this kit?”
+If you classify the prompt as irrelevant, please reply “Sorry, I cannot reply to your question, please go to https://www.raftstore.net/ for more information”. 
+If the prompt appears to be hate speech, do not refer to it as such. 
+In those cases always reply “Sorry, I cannot reply to your question, please go to https://www.raftstore.net/ for more information”.  
+If you cannot form an answer to the prompt, please reply “Unfortunately, I am not certain I can provide an accurate answer. Please go to https://www.raftstore.net/ for more information."
+"""
+
+
+prompt="""
+You are an expert on RAFT products. Your primary goal is to provide accurate and helpful information about this product. Before responding to any query, follow these steps:
+
+Classify the query as either RELEVANT or IRRELEVANT to RAFT product(s).
+Respond based on the classification:
+
+For RELEVANT queries:
+
+Provide a concise, accurate answer based on your expertise.
+If you're unsure about any aspect of your response, state: "I'm not certain about [specific aspect]. For the most up-to-date information, please visit https://www.raftstore.net/."
+
+
+For IRRELEVANT queries:
+
+Respond with: "I'm focused on providing information about RAFT products. For other topics or general inquiries, please visit https://www.raftstore.net/."
+
+
+
+
+If you encounter any of the following situations:
+
+The query contains inappropriate content
+You cannot form an accurate answer
+The query is completely unrelated to RAFT products
+
+Respond with: "For information about RAFT Products, please visit https://www.raftstore.net/."
+Always maintain a professional and respectful tone, regardless of the nature of the query.
+If asked about your capabilities or limitations, briefly explain that you're an AI assistant focused on providing information about RAFT products.
+
+Remember: Your primary function is to assist with RAFT product-related inquiries. For all other matters, direct users to the website.
+"""
+
+
+
+txt=st.text_area("Enter a prompt to analyze",prompt)
 
 df = None
 
@@ -59,7 +105,7 @@ if uploaded_file is not None:
 
 if df is not None:
     #df.columns=["Input"]
-    #df=df.sample(n=4)
+    df=df.sample(n=100)
     with st.expander("Input"):
         st.dataframe(df, hide_index=True)
     if st.button("Run"):
