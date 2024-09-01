@@ -19,12 +19,15 @@ models={
 }
 
 def apply_model(model,ai_text,prompt,user_input):
-    user_message=HumanMessage(content=f"{user_input}")
-    system_message=SystemMessage(content=f"{prompt} Relevant Content:\n\n {ai_text}\n")
-    #ai_message=SystemMessage(content=f"Relevant Content:\n\n {ai_text}\n")
-    messages = [system_message, user_message]
-    response=model.invoke(messages)
-    return response.content
+    try:
+        user_message=HumanMessage(content=f"{user_input}")
+        system_message=SystemMessage(content=f"{prompt} Relevant Content:\n\n {ai_text}\n")
+        #ai_message=SystemMessage(content=f"Relevant Content:\n\n {ai_text}\n")
+        messages = [system_message, user_message]
+        response=model.invoke(messages)
+        return response.content
+    except Exception as e:
+        return f"Error: {e}"
 
 st.title("RAFT")
 
@@ -62,6 +65,9 @@ Respond based on the classification:
 For RELEVANT queries:
 
 Provide a concise, accurate answer based on your expertise.
+Please answer the question in the same age level as the question - that is, assess the age level of the person asking the question and reply at the same level. 
+If you cannot determine the age level of the questioner, reply in a way an elementary school student will understand.
+
 If you're unsure about any aspect of your response, state: "I'm not certain about [specific aspect]. For the most up-to-date information, please visit https://www.raftstore.net/."
 
 
